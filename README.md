@@ -10,9 +10,11 @@ through closure delegation.
 
 ```sh
 gradle run
+gradle test
+gradle build
 ```
 
-Expected output:
+Expected application output:
 
 ```text
 alpha | beta | gamma
@@ -44,6 +46,11 @@ types, basic reference assignability, and primitive/wrapper pairing; it does
 not yet model all Groovy coercions, generic substitutions, varargs, or
 closure parameter inference.
 
-The project uses Groovy 6 and has no `src/main/resources` directory. The
-Gradle build has not been run in this environment, so compilation and runtime
-behavior still need verification.
+## Tests and CI
+
+`ContainerDslTest` verifies the result of the DSL calls and both overloads.
+The GitHub Actions workflow in `.github/workflows/gradle.yml` runs
+`gradle --no-daemon clean build` on pushes and pull requests. It installs
+Temurin 17 and Gradle 8.14.
+
+The project uses Groovy 6 and has no `src/main/resources` directory.
