@@ -88,10 +88,10 @@ boolean sameOrAssignable(actual, formal) {
     if (actual == formal || actual.name == formal.name) {
         return true
     }
-    if (actual.isPrimitive() && ClassHelper.getWrapper(actual) == formal) {
+    if (ClassHelper.isPrimitiveType(actual) && ClassHelper.getWrapper(actual) == formal) {
         return true
     }
-    if (formal.isPrimitive() && ClassHelper.getWrapper(formal) == actual) {
+    if (ClassHelper.isPrimitiveType(formal) && ClassHelper.getWrapper(formal) == actual) {
         return true
     }
     return actual.isDerivedFrom(formal) || actual.implementsInterface(formal)
