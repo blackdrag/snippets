@@ -1,19 +1,15 @@
 package demo
 
+import groovy.transform.CompileStatic
+
 /**
- * Groovy extension-method style: the first parameter is the receiver.
- * Add commands here; no command-name-to-method table is needed.
+ * DSL operations use extension-method-style signatures: the receiver is
+ * the first parameter, but these are ordinary static methods, not methods
+ * on Container and not closure-delegate methods.
  */
+@CompileStatic
 class Commands {
-    static void say(CommandContext self, String text) {
-        self.emit(text)
-    }
-
-    static void pause(CommandContext self, int seconds) {
-        self.emit("Pausing for ${seconds} second(s)")
-    }
-
-    static void finish(CommandContext self) {
-        self.emit('Finished')
+    static <T> void each(Container<T> self, Closure<?> action) {
+        self.values.each { T value -> action.call(value) }
     }
 }
