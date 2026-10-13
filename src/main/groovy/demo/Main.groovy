@@ -2,13 +2,13 @@ package demo
 
 import groovy.transform.CompileStatic
 
-@CompileStatic(extensions = 'classpath:commandDsl.groovy')
+@CompileStatic(extensions = 'src/main/groovy/demo/ContainerDslExtension.groovy')
 class Main {
     static void main(String[] args) {
-        new CommandContext().run {
-            say 'Hello from the DSL'
-            pause 2
-            finish()
+        Container<String> myContainer = new Container<String>(['alpha', 'beta', 'gamma'])
+
+        myContainer.each { String item ->
+            println "DSL item: $item"
         }
     }
 }
