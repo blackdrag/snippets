@@ -5,10 +5,11 @@ import groovy.transform.CompileStatic
 @CompileStatic(extensions = 'src/main/groovy/demo/ContainerDslExtension.groovy')
 class Main {
     static void main(String[] args) {
-        Container<String> myContainer = new Container<String>(['alpha', 'beta', 'gamma'])
+        Container<String> myContainer =
+            new Container<String>(['alpha', 'beta', 'gamma'])
 
-        myContainer.each { String item ->
-            println "DSL item: $item"
-        }
+        // Same DSL method name, selected by the argument's static type.
+        println myContainer.display(' | ')
+        println myContainer.display(2)
     }
 }
