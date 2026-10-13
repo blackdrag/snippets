@@ -16,7 +16,6 @@ import org.codehaus.groovy.transform.stc.StaticTypesMarker
  * subsequently try to resolve display on Container itself.
  */
 beforeMethodCall { call ->
-    println "DSL extension saw call: ${call.class.name} ${call.text}"
     if (!(call instanceof MethodCallExpression) ||
         call.implicitThis ||
         call.methodAsString == null) {
@@ -24,7 +23,6 @@ beforeMethodCall { call ->
     }
 
     def receiverType = getType(call.objectExpression)
-    println "DSL receiver type: ${receiverType?.name}; implicitThis=${call.implicitThis}"
     if (receiverType.name != 'demo.Container') {
         return false
     }
@@ -33,7 +31,12 @@ beforeMethodCall { call ->
         ? call.arguments.expressions
         : [call.arguments]
 
-    def commands = classNodeFor('demo.Commands')
+    // classNodeFor may return a classpath placeholder while Commands is part of
+    // this same compilation. Resolve the actual source ClassNode from the unit.
+    def commands = context.compilationUnit.AST.classes.find { it.name == 'demo.Commands' }
+    if (commands == null) {
+        return false
+    }
     def actualTypes = arguments.collect { arg -> getType(arg) }
     def candidates = commands.getMethods(call.methodAsString).findAll { method ->
         if (!method.isStatic() || method.parameters.length != arguments.size() + 1) {
@@ -54,7 +57,6 @@ beforeMethodCall { call ->
         return true
     }
 
-    println "DSL candidates for ${call.methodAsString}: ${candidates*.toString()}"
     if (candidates.size() == 1) {
         def selected = candidates[0]
         def rewrittenArguments = new ArgumentListExpression()
