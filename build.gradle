@@ -1,0 +1,16 @@
+plugins {
+    id 'groovy'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.apache.groovy:groovy:4.0.27'
+}
+
+application {
+    mainClass = 'demo.Main'
+}
