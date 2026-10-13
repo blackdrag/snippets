@@ -26,6 +26,12 @@ tasks.named('processResources') {
     }
 }
 
+// The extension must exist on the classpath before compileGroovy starts.
+tasks.named('compileGroovy') {
+    dependsOn tasks.named('processResources')
+    classpath += files(layout.buildDirectory.dir('resources/main'))
+}
+
 tasks.named('test') {
     useJUnit()
 }
