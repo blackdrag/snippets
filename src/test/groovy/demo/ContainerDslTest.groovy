@@ -5,7 +5,7 @@ import org.junit.Test
 
 import static org.junit.Assert.assertEquals
 
-@CompileStatic(extensions = 'src/main/groovy/demo/ContainerDslExtension.groovy')
+@CompileStatic(extensions = 'demo/ContainerDslExtension.groovy')
 class ContainerDslTest {
     @Test
     void selectsDisplayOverloadFromArgumentType() {
