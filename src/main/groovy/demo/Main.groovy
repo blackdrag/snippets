@@ -2,7 +2,7 @@ package demo
 
 import groovy.transform.CompileStatic
 
-@CompileStatic
+@CompileStatic(extensions = 'classpath:commandDsl.groovy')
 class Main {
     static void main(String[] args) {
         new CommandContext().run {
