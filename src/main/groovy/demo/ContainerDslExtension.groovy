@@ -35,6 +35,11 @@ beforeMethodCall { call ->
     // this same compilation. Resolve the actual source ClassNode from the unit.
     def commands = context.compilationUnit.AST.classes.find { it.name == 'demo.Commands' }
     if (commands == null) {
+        // In a separate compilation (for example compileTestGroovy), Commands
+        // is already compiled and must be resolved from the classpath instead.
+        commands = classNodeFor('demo.Commands')
+    }
+    if (commands == null) {
         return false
     }
     def actualTypes = arguments.collect { arg -> getType(arg) }
