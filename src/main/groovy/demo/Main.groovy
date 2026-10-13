@@ -2,7 +2,7 @@ package demo
 
 import groovy.transform.CompileStatic
 
-@CompileStatic(extensions = 'src/main/groovy/demo/ContainerDslExtension.groovy')
+@CompileStatic(extensions = 'demo/ContainerDslExtension.groovy')
 class Main {
     static List<String> evaluateDsl() {
         Container<String> myContainer =
