@@ -20,7 +20,7 @@ beforeMethodCall { call ->
 
         def receiverType = getType(call.objectExpression)
         if (receiverType.name == 'demo.Container') {
-            def commands = classNodeFor(demo.Commands)
+            def commands = classNodeFor('demo.Commands')
             def candidates = commands.getMethods(call.methodAsString).findAll { method ->
                 method.isStatic() &&
                     method.parameters.length > 0 &&
