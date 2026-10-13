@@ -53,4 +53,4 @@ The GitHub Actions workflow in `.github/workflows/gradle.yml` runs
 `gradle --no-daemon clean build` on pushes and pull requests. It installs
 Temurin 17 and Gradle 8.14.
 
-The project uses Groovy 6 and has no `src/main/resources` directory.
+The extension script is kept under `src/main/groovy` and copied to the classpath by `processResources`, because `@CompileStatic(extensions = ...)` resolves extension scripts as classpath resources. The project has no `src/main/resources` directory.
