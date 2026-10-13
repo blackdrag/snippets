@@ -3,6 +3,7 @@ import org.codehaus.groovy.ast.expr.ArgumentListExpression
 import org.codehaus.groovy.ast.expr.ClassExpression
 import org.codehaus.groovy.ast.expr.ConstantExpression
 import org.codehaus.groovy.ast.expr.MethodCallExpression
+import org.codehaus.groovy.transform.stc.StaticTypesMarker
 
 /*
  * Resolve explicit receiver calls against static methods in Commands.
@@ -11,7 +12,8 @@ import org.codehaus.groovy.ast.expr.MethodCallExpression
  *
  * Rewriting to Commands.method(receiver, args...) makes the selected target
  * an ordinary static call and avoids accidentally choosing a same-named DGM
- * extension method.
+ * extension method. Mark the call as handled so the type checker does not
+ * subsequently try to resolve display on Container itself.
  */
 beforeMethodCall { call ->
     if (!(call instanceof MethodCallExpression) ||
@@ -30,17 +32,17 @@ beforeMethodCall { call ->
         : [call.arguments]
 
     def commands = classNodeFor('demo.Commands')
+    def actualTypes = arguments.collect { arg -> getType(arg) }
     def candidates = commands.getMethods(call.methodAsString).findAll { method ->
         if (!method.isStatic() || method.parameters.length != arguments.size() + 1) {
             return false
         }
 
         def receiverParameter = method.parameters[0].type
-        if (receiverParameter.name != 'demo.Container') {
+        if (!sameOrAssignable(receiverType, receiverParameter)) {
             return false
         }
 
-        def actualTypes = arguments.collect { arg -> getType(arg) }
         def formalTypes = method.parameters.drop(1).collect { parameter -> parameter.type }
         for (int i = 0; i < actualTypes.size(); i++) {
             if (!sameOrAssignable(actualTypes[i], formalTypes[i])) {
@@ -60,8 +62,14 @@ beforeMethodCall { call ->
         call.setMethod(new ConstantExpression(selected.name))
         call.setArguments(rewrittenArguments)
         call.setImplicitThis(false)
+        call.putNodeMetaData(StaticTypesMarker.DIRECT_METHOD_CALL_TARGET, selected)
+        storeType(call, selected.returnType)
+        handled = true
+        return true
     } else if (candidates.size() > 1) {
         addStaticTypeError("Ambiguous DSL call: multiple Commands overloads match", call)
+        handled = true
+        return true
     }
     return false
 }
