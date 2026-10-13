@@ -18,6 +18,14 @@ application {
     mainClass = 'demo.Main'
 }
 
+// Groovy's type-checking extension scripts are loaded from the compilation classpath.
+// Keep the script in src/main/groovy, but also expose it as a classpath resource.
+tasks.named('processResources') {
+    from('src/main/groovy/demo/ContainerDslExtension.groovy') {
+        into 'demo'
+    }
+}
+
 tasks.named('test') {
     useJUnit()
 }
